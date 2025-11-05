@@ -544,7 +544,8 @@
                     daysNeeded: 0,
                     totalSkinfolds: 0,
                     targetWeight: 0,
-                    avgDailyDeficit: 0
+                    avgDailyDeficit: 0,
+                    deficitAccomplished: 0
                 };
                 
                 const latest = evaluations[evaluations.length - 1];
@@ -555,6 +556,14 @@
                 
                 // 1kg of fat = ~7700 kcal
                 const totalDeficitNeeded = fatToLose * 7700;
+                
+                // Calcula deficit já alcançado (progresso desde a primeira avaliação)
+                let deficitAccomplished = 0;
+                if (evaluations.length > 1) {
+                    const first = evaluations[0];
+                    const weightLost = first.weight - latest.weight;
+                    deficitAccomplished = weightLost * 7700;
+                }
                 
                 // Calculate average daily deficit from last 7 days
                 const last7Days = dailyLogs.filter(log => {
@@ -595,7 +604,8 @@
                     daysNeeded,
                     targetWeight: parseFloat((latest.weight - fatToLose).toFixed(2)),
                     totalSkinfolds,
-                    avgDailyDeficit
+                    avgDailyDeficit,
+                    deficitAccomplished
                 };
             };
 
@@ -3209,6 +3219,28 @@
                                         <div className="text-sm text-slate-400">7 pontos somados</div>
                                     </div>
                                 </div>
+
+                                {/* Progresso Alcançado - Mostra apenas se houver múltiplas avaliações */}
+                                {evaluations.length > 1 && stats.deficitAccomplished > 0 && (
+                                    <div className="bg-gradient-to-br from-green-600 to-emerald-600 rounded-2xl p-6 shadow-2xl">
+                                        <div className="flex items-center justify-center mb-4">
+                                            <TrendingDown className="h-10 w-10 mr-3 text-green-200" />
+                                            <h2 className="text-xl font-bold">Déficit Já Alcançado</h2>
+                                        </div>
+                                        <div className="text-center">
+                                            <div className="text-5xl font-bold mb-2">
+                                                {Math.round(stats.deficitAccomplished).toLocaleString()}
+                                            </div>
+                                            <div className="text-lg text-green-100">kcal queimados desde o início</div>
+                                            <div className="mt-4 text-sm text-green-100/80">
+                                                {safeFixed((evaluations[0].weight - evaluations[evaluations.length - 1].weight), 1)} kg perdidos × 7.700 kcal/kg
+                                            </div>
+                                            <div className="mt-2 text-xs text-green-100/70">
+                                                Progresso: {Math.round((stats.deficitAccomplished / (stats.deficit + stats.deficitAccomplished)) * 100)}% da jornada completa
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
 
                                 {/* Stats Grid - Row 2 */}
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
