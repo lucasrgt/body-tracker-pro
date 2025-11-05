@@ -1394,7 +1394,7 @@
           const details = [];
 
           // ========== VERIFICAÇÃO DE PMO (RECAÍDA CRÍTICA) ==========
-          // PMO afeta TODOS os módulos negativamente, não apenas NoFap
+          // PMO afeta Espiritual e NoFap, mas NÃO afeta Fitness (dieta/exercício são independentes)
           const hasPMO = nofapModeEnabled && log.cleanDay === false;
 
           // ========== MÓDULO FITNESS ==========
@@ -1409,12 +1409,8 @@
             let fitnessLabel = "";
             let fitnessIcon = "";
 
-            if (hasPMO) {
-              // PMO destrói a energia física e foco
-              fitnessScore = 0;
-              fitnessLabel = "💔 PMO = Zero energia";
-              fitnessIcon = "❌";
-            } else if (log.isFasting) {
+            // Fitness NÃO é afetado por PMO - dieta e exercício contam normalmente
+            if (log.isFasting) {
               fitnessScore = 100;
               fitnessLabel = "🔥 Jejum 24h";
               fitnessIcon = "💯";
