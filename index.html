@@ -3429,53 +3429,53 @@
                                 {/* Stats Grid - Row 2 */}
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                     {/* Weekly Deficit */}
-                                    <div className="bg-slate-800/50 backdrop-blur rounded-xl p-6 border border-slate-700">
+                                    <div className={`${standardCard} rounded-xl p-6 border`}>
                                         <div className="flex items-center justify-between mb-4">
-                                            <h3 className="text-lg font-semibold text-slate-300">Deficit Últimos 7 Dias</h3>
+                                            <h3 className={`text-lg font-semibold ${standardCardText}`}>Deficit Últimos 7 Dias</h3>
                                             <Flame className="h-6 w-6 text-orange-400" />
                                         </div>
                                         <div className="text-4xl font-bold text-orange-400">
                                             {Math.round(caloriesStats.actualDeficit).toLocaleString()} kcal
                                         </div>
-                                        <div className="text-sm text-slate-400 mt-2">
+                                        <div className={`text-sm ${textSecondary} mt-2`}>
                                             {caloriesStats.daysLogged} dias registrados
                                         </div>
-                                        <div className="text-sm text-slate-400">
+                                        <div className={`text-sm ${textSecondary}`}>
                                             Média: {caloriesStats.daysLogged > 0 ? Math.round(caloriesStats.actualDeficit / caloriesStats.daysLogged) : 0} kcal/dia
                                         </div>
                                     </div>
 
                                     {/* Progress Percentage */}
-                                    <div className="bg-slate-800/50 backdrop-blur rounded-xl p-6 border border-slate-700">
+                                    <div className={`${standardCard} rounded-xl p-6 border`}>
                                         <div className="flex items-center justify-between mb-4">
-                                            <h3 className="text-lg font-semibold text-slate-300">Progresso Semanal</h3>
+                                            <h3 className={`text-lg font-semibold ${standardCardText}`}>Progresso Semanal</h3>
                                             <Award className="h-6 w-6 text-yellow-400" />
                                         </div>
                                         <div className="text-4xl font-bold text-yellow-400">
                                             {caloriesStats.daysLogged > 0 ? 
                                                 ((caloriesStats.actualDeficit / (500 * 7)) * 100).toFixed(0) : 0}%
                                         </div>
-                                        <div className="text-sm text-slate-400 mt-2">
+                                        <div className={`text-sm ${textSecondary} mt-2`}>
                                             Do deficit ideal de 3.500 kcal/semana
                                         </div>
-                                        <div className="text-sm text-slate-400">
+                                        <div className={`text-sm ${textSecondary}`}>
                                             Basal: {basalCalories} kcal/dia
                                         </div>
                                     </div>
 
                                     {/* Fasting Days */}
-                                    <div className="bg-slate-800/50 backdrop-blur rounded-xl p-6 border border-slate-700">
+                                    <div className={`${standardCard} rounded-xl p-6 border`}>
                                         <div className="flex items-center justify-between mb-4">
-                                            <h3 className="text-lg font-semibold text-slate-300">Dias de Jejum</h3>
+                                            <h3 className={`text-lg font-semibold ${standardCardText}`}>Dias de Jejum</h3>
                                             <Flame className="h-6 w-6 text-indigo-400" />
                                         </div>
                                         <div className="text-4xl font-bold text-indigo-400">
                                             {caloriesStats.fastingDays}
                                         </div>
-                                        <div className="text-sm text-slate-400 mt-2">
+                                        <div className={`text-sm ${textSecondary} mt-2`}>
                                             Total de jejuns de 24h
                                         </div>
-                                        <div className="text-sm text-slate-400">
+                                        <div className={`text-sm ${textSecondary}`}>
                                             Disciplina máxima! 🔥
                                         </div>
                                     </div>
@@ -3487,15 +3487,15 @@
                                         const leanMass = latestEval.weight * (1 - latestBF / 100);
                                         
                                         return (
-                                            <div className="bg-slate-800/50 backdrop-blur rounded-xl p-6 border border-slate-700">
+                                            <div className={`${standardCard} rounded-xl p-6 border`}>
                                                 <div className="flex items-center justify-between mb-4">
-                                                    <h3 className="text-lg font-semibold text-slate-300">Massa Magra</h3>
+                                                    <h3 className={`text-lg font-semibold ${standardCardText}`}>Massa Magra</h3>
                                                     <Activity className="h-6 w-6 text-purple-400" />
                                                 </div>
                                                 <div className="text-4xl font-bold text-purple-400">
                                                     {safeFixed(leanMass, 2)} kg
                                                 </div>
-                                                <div className="text-sm text-slate-400 mt-2">
+                                                <div className={`text-sm ${textSecondary} mt-2`}>
                                                     {safeFixed((leanMass / latestEval.weight) * 100, 1)}% do peso total
                                                 </div>
                                                 <div className="text-sm text-slate-400">
@@ -3508,32 +3508,32 @@
 
                                 {/* Latest Evaluation */}
                                 {evaluations.length > 0 && (
-                                    <div className="bg-slate-800/50 backdrop-blur rounded-xl p-6 border border-slate-700">
-                                        <h3 className="text-xl font-bold mb-4 flex items-center">
+                                    <div className={`${standardCard} rounded-xl p-6 border`}>
+                                        <h3 className={`text-xl font-bold mb-4 flex items-center ${textPrimary}`}>
                                             <Award className="mr-2 h-6 w-6 text-yellow-400" />
                                             Última Avaliação
                                         </h3>
                                         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                                             <div>
-                                                <div className="text-sm text-slate-400">Data</div>
-                                                <div className="text-lg font-semibold">
+                                                <div className={`text-sm ${textSecondary}`}>Data</div>
+                                                <div className={`text-lg font-semibold ${textPrimary}`}>
                                                     {new Date(evaluations[evaluations.length - 1].date).toLocaleDateString('pt-BR')}
                                                 </div>
                                             </div>
                                             <div>
-                                                <div className="text-sm text-slate-400">Peso</div>
-                                                <div className="text-lg font-semibold">
+                                                <div className={`text-sm ${textSecondary}`}>Peso</div>
+                                                <div className={`text-lg font-semibold ${textPrimary}`}>
                                                     {evaluations[evaluations.length - 1].weight} kg
                                                 </div>
                                             </div>
                                             <div>
-                                                <div className="text-sm text-slate-400">Soma Dobras</div>
-                                                <div className="text-lg font-semibold">
+                                                <div className={`text-sm ${textSecondary}`}>Soma Dobras</div>
+                                                <div className={`text-lg font-semibold ${textPrimary}`}>
                                                     {stats.totalSkinfolds} mm
                                                 </div>
                                             </div>
                                             <div>
-                                                <div className="text-sm text-slate-400">BF%</div>
+                                                <div className={`text-sm ${textSecondary}`}>BF%</div>
                                                 <div className="text-lg font-semibold text-blue-400">
                                                     {safeFixed(stats.currentBF, 1)}%
                                                 </div>
@@ -3550,8 +3550,8 @@
                                     const protein = calculateProteinNeeds(leanMass);
                                     
                                     return (
-                                        <div className="bg-slate-800/50 backdrop-blur rounded-xl p-6 border border-slate-700">
-                                            <h3 className="text-xl font-bold mb-4 flex items-center">
+                                        <div className={`${standardCard} rounded-xl p-6 border`}>
+                                            <h3 className={`text-xl font-bold mb-4 flex items-center ${textPrimary}`}>
                                                 <Beef className="mr-2 h-7 w-7 text-orange-400" />
                                                 Necessidade de Proteína Diária
                                             </h3>
@@ -4252,26 +4252,26 @@
 
                                 {/* Add Evaluation Form */}
                                 {showAddEval && (
-                                    <div className="bg-slate-800 rounded-xl p-6 border border-slate-700">
-                                        <h3 className="text-xl font-bold mb-4">{editingEval ? 'Editar Avaliação' : 'Nova Avaliação'}</h3>
+                                    <div className={`${cardBgSolid} rounded-xl p-6 border ${cardBorder}`}>
+                                        <h3 className={`text-xl font-bold mb-4 ${textPrimary}`}>{editingEval ? 'Editar Avaliação' : 'Nova Avaliação'}</h3>
                                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                                             <div>
-                                                <label className="block text-sm text-slate-400 mb-2">Data</label>
+                                                <label className={`block text-sm ${textSecondary} mb-2`}>Data</label>
                                                 <input
                                                     type="date"
                                                     value={newEval.date}
                                                     onChange={(e) => setNewEval({...newEval, date: e.target.value})}
-                                                    className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white"
+                                                    className={`w-full ${inputBg} border ${inputBorder} rounded-lg px-4 py-2 ${inputText} ${focusRing} focus:outline-none`}
                                                 />
                                             </div>
                                             <div>
-                                                <label className="block text-sm text-slate-400 mb-2">Peso (kg)</label>
+                                                <label className={`block text-sm ${textSecondary} mb-2`}>Peso (kg)</label>
                                                 <input
                                                     type="number"
                                                     step="0.1"
                                                     value={newEval.weight}
                                                     onChange={(e) => setNewEval({...newEval, weight: e.target.value})}
-                                                    className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white"
+                                                    className={`w-full ${inputBg} border ${inputBorder} rounded-lg px-4 py-2 ${inputText} ${placeholderText} ${focusRing} focus:outline-none`}
                                                     placeholder="80.5"
                                                 />
                                             </div>
@@ -4279,17 +4279,17 @@
                                         
                                         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
                                             <div>
-                                                <label className="block text-sm text-slate-400 mb-2">Triceps (mm)</label>
+                                                <label className={`block text-sm ${textSecondary} mb-2`}>Triceps (mm)</label>
                                                 <input
                                                     type="number"
                                                     step="0.1"
                                                     value={newEval.triceps}
                                                     onChange={(e) => setNewEval({...newEval, triceps: e.target.value})}
-                                                    className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white"
+                                                    className={`w-full ${inputBg} border ${inputBorder} rounded-lg px-4 py-2 ${inputText} ${focusRing} focus:outline-none`}
                                                 />
                                             </div>
                                             <div>
-                                                <label className="block text-sm text-slate-400 mb-2">Subscapular (mm)</label>
+                                                <label className={`block text-sm ${textSecondary} mb-2`}>Subscapular (mm)</label>
                                                 <input
                                                     type="number"
                                                     step="0.1"
@@ -6933,9 +6933,9 @@
                                                 const selectedLog = selectedSpiritualDay ? dataByDate[selectedSpiritualDay] : null;
                                                 
                                                 return (
-                                                <div className="bg-slate-800/50 backdrop-blur rounded-xl p-6 border border-slate-700">
+                                                <div className={`${standardCard} rounded-xl p-6 border`}>
                                                     <div className="flex items-center justify-between mb-6">
-                                                        <h3 className="text-xl font-bold flex items-center">
+                                                        <h3 className={`text-xl font-bold flex items-center ${textPrimary}`}>
                                                             <span className="mr-2 text-2xl">📖</span>
                                                             Journal Espiritual
                                                         </h3>
@@ -7041,18 +7041,18 @@
                                                     })()}
                                                     
                                                     {/* Calendário estilo GitHub */}
-                                                    <div className="mb-6 w-full">
+                                                    <div className="mb-6 max-w-xs">
                                                         {/* Dias da semana */}
-                                                        <div className="grid grid-cols-15 gap-1 mb-1">
-                                                            {['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'].map(day => (
-                                                                <div key={day} className="text-[9px] text-slate-400 text-center font-semibold">
+                                                        <div className="grid grid-cols-7 gap-0.5 mb-0.5">
+                                                            {['D', 'S', 'T', 'Q', 'Q', 'S', 'S'].map((day, i) => (
+                                                                <div key={i} className={`text-[7px] ${textMuted} text-center font-semibold`}>
                                                                     {day}
                                                                 </div>
                                                             ))}
                                                         </div>
                                                         
                                                         {/* Grid de dias */}
-                                                        <div className="grid grid-cols-7 gap-1">
+                                                        <div className="grid grid-cols-7 gap-0.5">
                                                             {calendarDays.map((day, idx) => {
                                                                 if (day === null) {
                                                                     return <div key={`empty-${idx}`} className="aspect-square"></div>;
@@ -7102,7 +7102,7 @@
                                                                         key={day}
                                                                         onClick={() => setSelectedSpiritualDay(log ? dateStr : null)}
                                                                         disabled={!log}
-                                                                        className={`aspect-square rounded border transition-all flex items-center justify-center text-[10px] font-semibold
+                                                                        className={`aspect-square rounded-sm border transition-all flex items-center justify-center text-[8px] font-semibold
                                                                             ${colorClasses[quality]}
                                                                             ${isSelected ? 'ring-1 ring-purple-400 scale-105' : ''}
                                                                             ${isToday ? 'ring-1 ring-cyan-400' : ''}
