@@ -6856,7 +6856,73 @@
                           }
                         }
 
-                        // 5. WELLNESS INSIGHTS (se tiver dados)
+                        // 5. ANÁLISE DE FREQUÊNCIA DE MUSCULAÇÃO (última semana)
+                        const strengthDays = last7Days.filter((log) => {
+                          const strength = log.exerciseCalories?.strength || 0;
+                          return strength > 0;
+                        }).length;
+
+                        if (strengthDays < 3) {
+                          const severity =
+                            strengthDays === 0
+                              ? "crítico"
+                              : strengthDays === 1
+                              ? "muito baixo"
+                              : "baixo";
+                          const emoji =
+                            strengthDays === 0
+                              ? "🚨"
+                              : strengthDays === 1
+                              ? "⚠️"
+                              : "💡";
+                          insights.push({
+                            icon: emoji,
+                            type: "warning",
+                            title: `Musculação ${
+                              severity === "crítico"
+                                ? "Ausente"
+                                : "Insuficiente"
+                            }`,
+                            message: `Você treinou força apenas ${strengthDays}x esta semana. Ideal: 3-5x! Massa magra queima calorias 24/7 e acelera a queima de gordura.`,
+                            color:
+                              strengthDays === 0
+                                ? "bg-red-600/20 border-red-500/30"
+                                : "bg-orange-600/20 border-orange-500/30",
+                            textColor:
+                              strengthDays === 0
+                                ? "text-red-300"
+                                : "text-orange-300",
+                          });
+                        }
+
+                        // 6. ANÁLISE DE FREQUÊNCIA DE AERÓBICO (última semana)
+                        const cardioDays = last7Days.filter((log) => {
+                          const cardio = log.exerciseCalories?.cardio || 0;
+                          return cardio > 0;
+                        }).length;
+
+                        if (cardioDays < 2) {
+                          const emoji = cardioDays === 0 ? "🚨" : "💡";
+                          insights.push({
+                            icon: emoji,
+                            type: "warning",
+                            title:
+                              cardioDays === 0
+                                ? "Aeróbico Ausente"
+                                : "Aeróbico Insuficiente",
+                            message: `Apenas ${cardioDays}x de aeróbico esta semana. Mínimo: 2x! Mesmo uma caminhada de 30min já ajuda no déficit e na saúde cardiovascular.`,
+                            color:
+                              cardioDays === 0
+                                ? "bg-red-600/20 border-red-500/30"
+                                : "bg-yellow-600/20 border-yellow-500/30",
+                            textColor:
+                              cardioDays === 0
+                                ? "text-red-300"
+                                : "text-yellow-300",
+                          });
+                        }
+
+                        // 7. WELLNESS INSIGHTS (se tiver dados)
                         const logsWithWellness = dailyLogs.filter(
                           (log) => log.hungerLevel || log.energyLevel
                         );
@@ -6899,7 +6965,7 @@
                           }
                         }
 
-                        // 6. VELOCIDADE DE PROGRESSO (se tiver múltiplas avaliações)
+                        // 8. VELOCIDADE DE PROGRESSO (se tiver múltiplas avaliações)
                         if (evaluations.length >= 2) {
                           const firstEval = evaluations[0];
                           const latestEval =
@@ -7972,7 +8038,7 @@
                                 <Activity className="mr-2 h-4 w-4" />
                                 Calorias Queimadas em Exercícios
                               </h4>
-                              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
                                 <div>
                                   <label className="block text-xs text-slate-400 mb-2 flex items-center justify-between">
                                     <span>💪 Musculação (kcal)</span>
@@ -8096,38 +8162,45 @@
                                         <option value="bike">🚴 Bike</option>
                                       </select>
 
-                                      {/* Distância OU Tempo */}
-                                      <div className="grid grid-cols-2 gap-2">
-                                        <div>
-                                          <input
-                                            type="number"
-                                            step="0.1"
-                                            value={newLog.cardioDistance}
-                                            onChange={(e) =>
-                                              setNewLog({
-                                                ...newLog,
-                                                cardioDistance: e.target.value,
-                                              })
-                                            }
-                                            className="w-full bg-slate-700 border border-slate-600 rounded px-2 py-1 text-white text-sm"
-                                            placeholder="Distância (km)"
-                                            min="0"
-                                          />
-                                        </div>
-                                        <div>
-                                          <input
-                                            type="number"
-                                            value={newLog.cardioTime}
-                                            onChange={(e) =>
-                                              setNewLog({
-                                                ...newLog,
-                                                cardioTime: e.target.value,
-                                              })
-                                            }
-                                            className="w-full bg-slate-700 border border-slate-600 rounded px-2 py-1 text-white text-sm"
-                                            placeholder="Tempo (min)"
-                                            min="0"
-                                          />
+                                      {/* Distância OU Tempo - Aceita ambos ou só um */}
+                                      <div>
+                                        <label className="text-xs text-slate-400 mb-1 block">
+                                          📏 Preencha o que souber (ambos ou
+                                          apenas 1):
+                                        </label>
+                                        <div className="grid grid-cols-2 gap-2">
+                                          <div>
+                                            <input
+                                              type="number"
+                                              step="0.1"
+                                              value={newLog.cardioDistance}
+                                              onChange={(e) =>
+                                                setNewLog({
+                                                  ...newLog,
+                                                  cardioDistance:
+                                                    e.target.value,
+                                                })
+                                              }
+                                              className="w-full bg-slate-700 border border-slate-600 rounded px-2 py-1 text-white text-sm"
+                                              placeholder="Distância (km)"
+                                              min="0"
+                                            />
+                                          </div>
+                                          <div>
+                                            <input
+                                              type="number"
+                                              value={newLog.cardioTime}
+                                              onChange={(e) =>
+                                                setNewLog({
+                                                  ...newLog,
+                                                  cardioTime: e.target.value,
+                                                })
+                                              }
+                                              className="w-full bg-slate-700 border border-slate-600 rounded px-2 py-1 text-white text-sm"
+                                              placeholder="Tempo (min)"
+                                              min="0"
+                                            />
+                                          </div>
                                         </div>
                                       </div>
 
@@ -8191,9 +8264,13 @@
                                             </div>
                                           </div>
                                         ) : (
-                                          <p className="text-xs text-slate-500 text-center">
-                                            Preencha distância OU tempo
-                                          </p>
+                                          <div className="text-xs text-slate-500 text-center p-2 bg-slate-700/30 rounded">
+                                            💡 Preencha{" "}
+                                            <strong>pelo menos 1</strong>:
+                                            distância ou tempo
+                                            <br />
+                                            (Se souber ambos, ainda melhor!)
+                                          </div>
                                         );
                                       })()}
                                     </div>
