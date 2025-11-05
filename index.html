@@ -2641,27 +2641,7 @@
                                         pulse: false
                                     };
                                 }
-                                
-                                // 2. Dias até a meta (se o progresso é bom)
-                                if (stats.avgDailyDeficit > 300 && stats.daysNeeded < 100) {
-                                    return {
-                                        emoji: '🎯',
-                                        value: stats.daysNeeded,
-                                        label: `dias até ${targetBodyFat}%`,
-                                        color: 'from-blue-500 to-purple-500',
-                                        pulse: false
-                                    };
-                                }
-                                
-                                // 3. BF% atual (sempre relevante)
-                                return {
-                                    emoji: '📊',
-                                    value: safeFixed(stats.currentBF, 1),
-                                    label: '% gordura',
-                                    color: 'from-cyan-500 to-blue-500',
-                                    pulse: false
-                                };
-                            };
+                            }; 
                             
                             const badge = getSmartBadge();
                             
