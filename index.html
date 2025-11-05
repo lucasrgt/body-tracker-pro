@@ -5156,7 +5156,7 @@
                       }
 
                       // 4. Streak padrão (fallback)
-                      if (consecutiveGood > 0) {
+                      if (consecutiveGood > 3) {
                         return {
                           emoji: "🔥",
                           value: consecutiveGood,
@@ -5173,7 +5173,7 @@
                       return {
                         emoji: "📊",
                         value: dailyLogs.length,
-                        label: "registros",
+                        label: dailyLogs.length > 1 ? "registros" : "registro",
                         color: "from-slate-500 to-slate-600",
                         pulse: false,
                       };
@@ -5426,7 +5426,7 @@
                         for (let i = days - 1; i >= 0; i--) {
                           const date = new Date(viewDate);
                           date.setDate(date.getDate() - i);
-                          const dateStr = date.toISOString().split("T")[0];
+                          const dateStr = getLocalDateString(date);
 
                           const log = dailyLogs.find((l) => l.date === dateStr);
                           const isTodayDate = isToday(dateStr);
@@ -5480,7 +5480,7 @@
                         for (let i = 0; i < 7; i++) {
                           const date = new Date(startOfWeek);
                           date.setDate(date.getDate() + i);
-                          const dateStr = date.toISOString().split("T")[0];
+                          const dateStr = getLocalDateString(date);
 
                           const log = dailyLogs.find((l) => l.date === dateStr);
                           const isTodayDate = isToday(dateStr);
@@ -5899,7 +5899,7 @@
                             <span className="text-slate-300">Futuro</span>
                           </div>
                           <div className="flex items-center gap-2">
-                            <div className="w-4 h-4 rounded bg-purple-500 ring-2 ring-white ring-offset-2 ring-offset-slate-900"></div>
+                            <div className="w-4 h-4 rounded ring-2 ring-white ring-offset-2 ring-offset-slate-900"></div>
                             <span className="text-slate-300">Hoje</span>
                           </div>
                         </div>
