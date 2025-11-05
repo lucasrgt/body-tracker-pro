@@ -1074,13 +1074,12 @@
           if (evaluations.length === 0)
             return { remaining: 0, accumulated: 0, initial: 0 };
 
-          // Déficit inicial (da primeira avaliação - mais antiga)
-          const sortedEvals = getSortedEvaluations(evaluations);
-          const first = sortedEvals[sortedEvals.length - 1]; // Mais antiga
-          const firstBF = calculateBodyFat(first);
-          const firstFatMass = (firstBF / 100) * first.weight;
-          const targetFatMass = (targetBodyFat / 100) * first.weight;
-          const initialFatToLose = firstFatMass - targetFatMass;
+          // Déficit inicial (da avaliação mais recente)
+          const latest = getLatestEvaluation(evaluations);
+          const currentBF = calculateBodyFat(latest);
+          const currentFatMass = (currentBF / 100) * latest.weight;
+          const targetFatMass = (targetBodyFat / 100) * latest.weight;
+          const initialFatToLose = currentFatMass - targetFatMass;
           const initialDeficit = initialFatToLose * 7700;
 
           // Acumula déficit de todos os logs diários
