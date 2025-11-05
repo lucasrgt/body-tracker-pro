@@ -892,7 +892,8 @@
               history: [],
             };
 
-          const history = evaluations.map((ev) => {
+          const sortedEvaluations = getSortedEvaluations(evaluations);
+          const history = sortedEvaluations.map((ev) => {
             const bf = calculateBodyFat(ev);
             const fatMass = (bf / 100) * ev.weight;
             const leanMass = ev.weight - fatMass;
@@ -904,8 +905,8 @@
             };
           });
 
-          const first = history[0];
-          const latest = history[history.length - 1];
+          const first = history[history.length - 1]; // Mais antiga
+          const latest = history[0]; // Mais recente
           const change = latest.leanMass - first.leanMass;
           const trend =
             change > 0.5 ? "gaining" : change < -0.5 ? "losing" : "stable";
@@ -6712,11 +6713,8 @@
                                 {safeFixed(muscleData.change, 2)} kg
                               </div>
                               {(() => {
-                                const first = muscleData.history[0];
-                                const latest =
-                                  muscleData.history[
-                                    muscleData.history.length - 1
-                                  ];
+                                const first = muscleData.history[muscleData.history.length - 1]; // Mais antiga
+                                const latest = muscleData.history[0]; // Mais recente
                                 const weightChange =
                                   latest.weight - first.weight;
                                 const leanChange =
@@ -6821,11 +6819,8 @@
                               </div>
                               <div className="text-3xl font-bold text-blue-400">
                                 {(() => {
-                                  const first = muscleData.history[0];
-                                  const latest =
-                                    muscleData.history[
-                                      muscleData.history.length - 1
-                                    ];
+                                  const first = muscleData.history[muscleData.history.length - 1]; // Mais antiga
+                                  const latest = muscleData.history[0]; // Mais recente
                                   const fatLost =
                                     first.fatMass - latest.fatMass;
                                   return `📉 ${
@@ -6834,10 +6829,8 @@
                                 })()}
                               </div>
                               <div className="text-xs text-slate-400 mt-2">
-                                {muscleData.history[0].fatMass >
-                                muscleData.history[
-                                  muscleData.history.length - 1
-                                ].fatMass
+                                {muscleData.history[muscleData.history.length - 1].fatMass >
+                                muscleData.history[0].fatMass
                                   ? "🔥 Queimando gordura!"
                                   : "⚠️ Foco no deficit!"}
                               </div>
