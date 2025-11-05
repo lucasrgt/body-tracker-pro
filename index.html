@@ -830,9 +830,9 @@
                 
                 if (editingEval) {
                     // Editando avaliação existente
-                    setEvaluations(evaluations.map(eval => 
-                        eval.id === editingEval ? {
-                            ...eval,
+                    setEvaluations(evaluations.map(e => 
+                        e.id === editingEval ? {
+                            ...e,
                             date: newEval.date,
                             weight: Number(newEval.weight),
                             triceps: Number(newEval.triceps),
@@ -842,7 +842,7 @@
                             abdominal: Number(newEval.abdominal),
                             suprailiac: Number(newEval.suprailiac),
                             thigh: Number(newEval.thigh)
-                        } : eval
+                        } : e
                     ));
                     setEditingEval(null);
                 } else {
