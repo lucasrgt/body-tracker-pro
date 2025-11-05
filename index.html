@@ -1091,7 +1091,8 @@
             const exerciseTotal =
               (log.exerciseCalories?.strength || 0) +
               (log.exerciseCalories?.cardio || 0);
-            const dailyDeficit = basalCalories + exerciseTotal - (log.calories || 0);
+            const dailyDeficit =
+              basalCalories + exerciseTotal - (log.calories || 0);
             return sum + dailyDeficit;
           }, 0);
 
