@@ -455,10 +455,17 @@
           calories: "",
           isFasting: false,
           isRefeed: false,
+          didNotTrack: false, // Exagerou e não trackeou
           exerciseCalories: {
             strength: "",
             cardio: "",
           },
+          // Campos da calculadora de aeróbico
+          cardioMode: "manual", // "manual" | "calculator"
+          cardioType: "corrida", // "corrida" | "caminhada" | "bike"
+          cardioDistance: "", // em km
+          cardioTime: "", // em minutos
+          cardioIntensity: "moderada", // "leve" | "moderada" | "intensa"
           hungerLevel: 5, // 1-10 scale
           energyLevel: 5, // 1-10 scale
           notes: "",
@@ -1199,6 +1206,97 @@
           return null;
         };
 
+        // Calculadora de Calorias de Aeróbico
+        const calculateCardioCalories = (
+          type,
+          distance,
+          time,
+          intensity,
+          weight
+        ) => {
+          // Pega peso da última avaliação ou usa 70kg default
+          const userWeight =
+            weight ||
+            (evaluations.length > 0
+              ? evaluations[evaluations.length - 1].weight
+              : 70);
+
+          let caloriesPerKm = 0;
+          let caloriesPerMinute = 0;
+
+          switch (type) {
+            case "corrida":
+              // Corrida: ~1 kcal/kg/km (aproximação)
+              // Intensidade ajusta ±15%
+              const runningBase = userWeight; // kcal por km
+              if (intensity === "leve")
+                caloriesPerKm = runningBase * 0.85; // trote leve
+              else if (intensity === "moderada")
+                caloriesPerKm = runningBase * 1.0; // ritmo médio
+              else caloriesPerKm = runningBase * 1.15; // corrida intensa
+
+              if (distance > 0) {
+                return Math.round(distance * caloriesPerKm);
+              } else if (time > 0) {
+                // Estima velocidade média: leve=8km/h, moderada=10km/h, intensa=12km/h
+                const speedKmH =
+                  intensity === "leve" ? 8 : intensity === "moderada" ? 10 : 12;
+                const estimatedDistance = (time / 60) * speedKmH;
+                return Math.round(estimatedDistance * caloriesPerKm);
+              }
+              break;
+
+            case "caminhada":
+              // Caminhada: ~0.5 kcal/kg/km (metade da corrida)
+              const walkingBase = userWeight * 0.5;
+              if (intensity === "leve")
+                caloriesPerKm = walkingBase * 0.85; // passeio
+              else if (intensity === "moderada")
+                caloriesPerKm = walkingBase * 1.0; // caminhada normal
+              else caloriesPerKm = walkingBase * 1.2; // caminhada rápida
+
+              if (distance > 0) {
+                return Math.round(distance * caloriesPerKm);
+              } else if (time > 0) {
+                // Velocidade: leve=4km/h, moderada=5km/h, intensa=6km/h
+                const speedKmH =
+                  intensity === "leve" ? 4 : intensity === "moderada" ? 5 : 6;
+                const estimatedDistance = (time / 60) * speedKmH;
+                return Math.round(estimatedDistance * caloriesPerKm);
+              }
+              break;
+
+            case "bike":
+              // Bike: varia muito, baseado em tempo e intensidade
+              // Leve: 250 kcal/h, Moderada: 450 kcal/h, Intensa: 650 kcal/h
+              if (intensity === "leve") caloriesPerMinute = 4.2; // 250/60
+              else if (intensity === "moderada")
+                caloriesPerMinute = 7.5; // 450/60
+              else caloriesPerMinute = 10.8; // 650/60
+
+              // Ajusta pelo peso (pessoa mais pesada queima mais)
+              caloriesPerMinute = caloriesPerMinute * (userWeight / 70);
+
+              if (time > 0) {
+                return Math.round(time * caloriesPerMinute);
+              } else if (distance > 0) {
+                // Estima tempo baseado em velocidade média
+                // Leve: 15km/h, Moderada: 20km/h, Intensa: 25km/h
+                const speedKmH =
+                  intensity === "leve"
+                    ? 15
+                    : intensity === "moderada"
+                    ? 20
+                    : 25;
+                const estimatedTime = (distance / speedKmH) * 60; // minutos
+                return Math.round(estimatedTime * caloriesPerMinute);
+              }
+              break;
+          }
+
+          return 0;
+        };
+
         // Add evaluation
         // Edit evaluation
         const handleEditEvaluation = (evaluation) => {
@@ -1280,10 +1378,16 @@
             calories: log.calories,
             isFasting: log.isFasting,
             isRefeed: log.isRefeed,
+            didNotTrack: log.didNotTrack || false,
             exerciseCalories: {
               strength: log.exerciseCalories?.strength || "",
               cardio: log.exerciseCalories?.cardio || "",
             },
+            cardioMode: log.cardioMode || "manual",
+            cardioType: log.cardioType || "corrida",
+            cardioDistance: log.cardioDistance || "",
+            cardioTime: log.cardioTime || "",
+            cardioIntensity: log.cardioIntensity || "moderada",
             hungerLevel: log.hungerLevel || 5,
             energyLevel: log.energyLevel || 5,
             notes: log.notes || "",
@@ -1304,10 +1408,17 @@
         };
 
         const handleSaveLog = () => {
-          // Validação: Se fitness está ativo, precisa de calorias ou jejum
+          // Validação: Se fitness está ativo, precisa de calorias, jejum, ou marcar que não trackeou
           // Se fitness está desativado, pode salvar só com dados espirituais/nofap
-          if (fitnessModeEnabled && !newLog.calories && !newLog.isFasting) {
-            alert("Por favor, preencha as calorias ou marque como jejum!");
+          if (
+            fitnessModeEnabled &&
+            !newLog.calories &&
+            !newLog.isFasting &&
+            !newLog.didNotTrack
+          ) {
+            alert(
+              "Por favor, preencha as calorias, marque como jejum, ou marque 'Exagerei e não trackeei'!"
+            );
             return;
           }
 
@@ -1318,10 +1429,16 @@
               calories: newLog.isFasting ? 0 : Number(newLog.calories),
               isFasting: newLog.isFasting || false,
               isRefeed: newLog.isRefeed || false,
+              didNotTrack: newLog.didNotTrack || false,
               exerciseCalories: {
                 strength: Number(newLog.exerciseCalories?.strength || 0),
                 cardio: Number(newLog.exerciseCalories?.cardio || 0),
               },
+              cardioMode: newLog.cardioMode || "manual",
+              cardioType: newLog.cardioType || "corrida",
+              cardioDistance: newLog.cardioDistance || "",
+              cardioTime: newLog.cardioTime || "",
+              cardioIntensity: newLog.cardioIntensity || "moderada",
               hungerLevel: Number(newLog.hungerLevel || 5),
               energyLevel: Number(newLog.energyLevel || 5),
               notes: newLog.notes || "",
@@ -1363,7 +1480,13 @@
             calories: "",
             isFasting: false,
             isRefeed: false,
+            didNotTrack: false,
             exerciseCalories: { strength: "", cardio: "" },
+            cardioMode: "manual",
+            cardioType: "corrida",
+            cardioDistance: "",
+            cardioTime: "",
+            cardioIntensity: "moderada",
             hungerLevel: 5,
             energyLevel: 5,
             notes: "",
@@ -1418,7 +1541,12 @@
             let fitnessIcon = "";
 
             // Fitness NÃO é afetado por PMO - dieta e exercício contam normalmente
-            if (log.isFasting) {
+            if (log.didNotTrack) {
+              // Exagerou e não trackeou = day ruined
+              fitnessScore = 10;
+              fitnessLabel = "🍕 Exagerou e não trackeou";
+              fitnessIcon = "❌";
+            } else if (log.isFasting) {
               fitnessScore = 100;
               fitnessLabel = "🔥 Jejum 24h";
               fitnessIcon = "💯";
@@ -4885,13 +5013,35 @@
                         return {
                           emoji: "🔥",
                           value: consecutiveGood,
-                          label: "dias seguidos",
+                          label:
+                            consecutiveGood === 1
+                              ? "dia seguido"
+                              : "dias seguidos",
                           color: "from-orange-500 to-red-500",
                           pulse: false,
                         };
                       }
 
-                      // 2. Dias até a meta (se o progresso é bom E tiver pelo menos 30 registros)
+                      // 2. Verifica se passou muito tempo desde última avaliação (30+ dias)
+                      if (evaluations.length > 0) {
+                        const lastEval = evaluations[evaluations.length - 1];
+                        const lastEvalDate = new Date(lastEval.date);
+                        const daysSinceEval = Math.floor(
+                          (new Date() - lastEvalDate) / (1000 * 60 * 60 * 24)
+                        );
+
+                        if (daysSinceEval >= 30) {
+                          return {
+                            emoji: "⏰",
+                            value: daysSinceEval,
+                            label: "dias sem avaliar",
+                            color: "from-yellow-500 to-orange-500",
+                            pulse: daysSinceEval >= 45,
+                          };
+                        }
+                      }
+
+                      // 3. Dias até a meta (se o progresso é bom E tiver pelo menos 30 registros)
                       if (
                         stats.avgDailyDeficit > 300 &&
                         stats.daysNeeded < 100 &&
@@ -4906,12 +5056,26 @@
                         };
                       }
 
-                      // 3. BF% atual (sempre relevante)
+                      // 4. Streak padrão (fallback)
+                      if (consecutiveGood > 0) {
+                        return {
+                          emoji: "🔥",
+                          value: consecutiveGood,
+                          label:
+                            consecutiveGood === 1
+                              ? "dia seguido"
+                              : "dias seguidos",
+                          color: "from-orange-500 to-red-500",
+                          pulse: false,
+                        };
+                      }
+
+                      // 5. Total de registros (fallback final)
                       return {
                         emoji: "📊",
-                        value: safeFixed(stats.currentBF, 1),
-                        label: "% gordura",
-                        color: "from-cyan-500 to-blue-500",
+                        value: dailyLogs.length,
+                        label: "registros",
+                        color: "from-slate-500 to-slate-600",
                         pulse: false,
                       };
                     }
@@ -5835,6 +5999,29 @@
                               ? currentBF + bfPercentChange
                               : currentBF - bfPercentChange;
 
+                            // Calcula gordura a perder estimada e soma das dobras estimada
+                            const estimatedFatToLose =
+                              currentWeight > 0
+                                ? (estimatedCurrentBF / 100) * currentWeight -
+                                  (targetBodyFat / 100) * currentWeight
+                                : 0;
+
+                            // Estima soma das dobras baseado no BF% atual da última avaliação (se houver)
+                            // Calcula a mudança proporcional nas dobras baseado na mudança de BF%
+                            const currentSkinfolds = stats.totalSkinfolds || 0;
+                            const bfChange =
+                              currentBF > 0
+                                ? estimatedCurrentBF - currentBF
+                                : 0;
+                            const skinfoldChange =
+                              currentSkinfolds > 0
+                                ? (bfChange / currentBF) * currentSkinfolds
+                                : 0;
+                            const estimatedSkinfolds = Math.max(
+                              0,
+                              currentSkinfolds + skinfoldChange
+                            );
+
                             return (
                               <div
                                 className={`mt-3 pt-3 border-t border-white/10 text-center ${
@@ -5861,16 +6048,37 @@
                                     % BF
                                   </div>
                                 </div>
-                                <div className="text-xs text-blue-100/80 mt-2">
-                                  BF% estimado atual:{" "}
-                                  <span className="font-bold text-white">
-                                    {safeFixed(estimatedCurrentBF, 1)}%
-                                  </span>
-                                  {currentBF > 0 && (
-                                    <span className="text-white/50 ml-1">
-                                      (base: {safeFixed(currentBF, 1)}%)
-                                    </span>
-                                  )}
+
+                                {/* Métricas Estimadas */}
+                                <div className="mt-3 grid grid-cols-3 gap-2 text-xs">
+                                  <div className="bg-white/5 rounded p-2">
+                                    <div className="text-blue-200/70 mb-1">
+                                      BF% atual
+                                    </div>
+                                    <div className="font-bold text-white">
+                                      {safeFixed(estimatedCurrentBF, 1)}%
+                                    </div>
+                                  </div>
+                                  <div className="bg-white/5 rounded p-2">
+                                    <div className="text-blue-200/70 mb-1">
+                                      A perder
+                                    </div>
+                                    <div className="font-bold text-white">
+                                      {safeFixed(
+                                        Math.max(0, estimatedFatToLose),
+                                        1
+                                      )}{" "}
+                                      kg
+                                    </div>
+                                  </div>
+                                  <div className="bg-white/5 rounded p-2">
+                                    <div className="text-blue-200/70 mb-1">
+                                      7 dobras
+                                    </div>
+                                    <div className="font-bold text-white">
+                                      {safeFixed(estimatedSkinfolds, 0)} mm
+                                    </div>
+                                  </div>
                                 </div>
                                 {isGain && (
                                   <div className="text-xs text-red-200/70 mt-1">
@@ -5878,6 +6086,15 @@
                                     gordura!
                                   </div>
                                 )}
+
+                                {/* Disclaimer */}
+                                <div className="text-xs text-blue-100/50 mt-3 pt-2 border-t border-white/5">
+                                  ⚠️ Valores aproximados baseados em 7.700
+                                  kcal/kg de gordura. O metabolismo varia
+                                  diariamente e pode não refletir exatamente a
+                                  realidade. Use como referência motivacional!
+                                  💪
+                                </div>
                               </div>
                             );
                           })()}
@@ -7617,6 +7834,7 @@
                                         ...newLog,
                                         isFasting: e.target.checked,
                                         isRefeed: false,
+                                        didNotTrack: false,
                                         calories: e.target.checked
                                           ? "0"
                                           : newLog.calories,
@@ -7653,6 +7871,7 @@
                                         ...newLog,
                                         isRefeed: e.target.checked,
                                         isFasting: false,
+                                        didNotTrack: false,
                                         calories: e.target.checked
                                           ? refeedCals.toString()
                                           : newLog.calories,
@@ -7678,6 +7897,44 @@
                                   </div>
                                 </label>
                               </div>
+                            </div>
+
+                            {/* Did Not Track Checkbox */}
+                            <div className="p-4 bg-red-900/20 border border-red-700/30 rounded-lg">
+                              <label className="flex items-center gap-3 cursor-pointer">
+                                <input
+                                  type="checkbox"
+                                  checked={newLog.didNotTrack}
+                                  onChange={(e) =>
+                                    setNewLog({
+                                      ...newLog,
+                                      didNotTrack: e.target.checked,
+                                      isFasting: false,
+                                      isRefeed: false,
+                                      calories: e.target.checked
+                                        ? "3750"
+                                        : newLog.calories,
+                                    })
+                                  }
+                                  className="w-5 h-5 rounded border-slate-600 text-red-600 focus:ring-red-500"
+                                />
+                                <div className="flex-1">
+                                  <span className="text-white font-semibold">
+                                    🍕 Exagerei e não trackeei
+                                  </span>
+                                  <p className="text-xs text-slate-400 mt-1">
+                                    Estimativa realista:{" "}
+                                    <strong className="text-red-300">
+                                      3.750 kcal
+                                    </strong>{" "}
+                                    (pizza, lanche, sobremesas, etc)
+                                  </p>
+                                  <p className="text-xs text-red-200/70 mt-1">
+                                    ⚠️ Um vacilo pode anular 5-7 dias de
+                                    esforço! Seja honesto com seu tracking.
+                                  </p>
+                                </div>
+                              </label>
                             </div>
 
                             {/* Refeed Alert */}
@@ -7751,34 +8008,196 @@
                                 <div>
                                   <label className="block text-xs text-slate-400 mb-2 flex items-center justify-between">
                                     <span>🏃 Aeróbico (kcal)</span>
-                                    <span
-                                      className="text-yellow-400 cursor-help"
-                                      title="Mais fácil de estimar. Corrida: ~100 kcal/km. Bike: 400-600/hora"
-                                    >
-                                      ℹ️
-                                    </span>
+                                    <div className="flex gap-2">
+                                      <button
+                                        type="button"
+                                        onClick={() =>
+                                          setNewLog({
+                                            ...newLog,
+                                            cardioMode: "manual",
+                                            exerciseCalories: {
+                                              ...newLog.exerciseCalories,
+                                              cardio: "",
+                                            },
+                                          })
+                                        }
+                                        className={`text-xs px-2 py-1 rounded transition-all ${
+                                          newLog.cardioMode === "manual"
+                                            ? "bg-blue-600 text-white"
+                                            : "bg-slate-700 text-slate-400 hover:bg-slate-600"
+                                        }`}
+                                      >
+                                        Manual
+                                      </button>
+                                      <button
+                                        type="button"
+                                        onClick={() =>
+                                          setNewLog({
+                                            ...newLog,
+                                            cardioMode: "calculator",
+                                          })
+                                        }
+                                        className={`text-xs px-2 py-1 rounded transition-all ${
+                                          newLog.cardioMode === "calculator"
+                                            ? "bg-green-600 text-white"
+                                            : "bg-slate-700 text-slate-400 hover:bg-slate-600"
+                                        }`}
+                                      >
+                                        🧮 Calculadora
+                                      </button>
+                                    </div>
                                   </label>
-                                  <input
-                                    type="number"
-                                    value={
-                                      newLog.exerciseCalories?.cardio || ""
-                                    }
-                                    onChange={(e) =>
-                                      setNewLog({
-                                        ...newLog,
-                                        exerciseCalories: {
-                                          ...newLog.exerciseCalories,
-                                          cardio: e.target.value,
-                                        },
-                                      })
-                                    }
-                                    className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white"
-                                    placeholder="300"
-                                    min="0"
-                                  />
-                                  <p className="text-xs text-slate-500 mt-1">
-                                    Corrida: ~100 kcal/km
-                                  </p>
+
+                                  {newLog.cardioMode === "manual" ? (
+                                    // Modo Manual
+                                    <>
+                                      <input
+                                        type="number"
+                                        value={
+                                          newLog.exerciseCalories?.cardio || ""
+                                        }
+                                        onChange={(e) =>
+                                          setNewLog({
+                                            ...newLog,
+                                            exerciseCalories: {
+                                              ...newLog.exerciseCalories,
+                                              cardio: e.target.value,
+                                            },
+                                          })
+                                        }
+                                        className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white"
+                                        placeholder="300"
+                                        min="0"
+                                      />
+                                      <p className="text-xs text-slate-500 mt-1">
+                                        Digite manualmente (smartwatch, etc)
+                                      </p>
+                                    </>
+                                  ) : (
+                                    // Modo Calculadora
+                                    <div className="space-y-2">
+                                      {/* Tipo de Aeróbico */}
+                                      <select
+                                        value={newLog.cardioType}
+                                        onChange={(e) =>
+                                          setNewLog({
+                                            ...newLog,
+                                            cardioType: e.target.value,
+                                          })
+                                        }
+                                        className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-white text-sm"
+                                      >
+                                        <option value="corrida">
+                                          🏃 Corrida
+                                        </option>
+                                        <option value="caminhada">
+                                          🚶 Caminhada
+                                        </option>
+                                        <option value="bike">🚴 Bike</option>
+                                      </select>
+
+                                      {/* Distância OU Tempo */}
+                                      <div className="grid grid-cols-2 gap-2">
+                                        <div>
+                                          <input
+                                            type="number"
+                                            step="0.1"
+                                            value={newLog.cardioDistance}
+                                            onChange={(e) =>
+                                              setNewLog({
+                                                ...newLog,
+                                                cardioDistance: e.target.value,
+                                              })
+                                            }
+                                            className="w-full bg-slate-700 border border-slate-600 rounded px-2 py-1 text-white text-sm"
+                                            placeholder="Distância (km)"
+                                            min="0"
+                                          />
+                                        </div>
+                                        <div>
+                                          <input
+                                            type="number"
+                                            value={newLog.cardioTime}
+                                            onChange={(e) =>
+                                              setNewLog({
+                                                ...newLog,
+                                                cardioTime: e.target.value,
+                                              })
+                                            }
+                                            className="w-full bg-slate-700 border border-slate-600 rounded px-2 py-1 text-white text-sm"
+                                            placeholder="Tempo (min)"
+                                            min="0"
+                                          />
+                                        </div>
+                                      </div>
+
+                                      {/* Intensidade */}
+                                      <select
+                                        value={newLog.cardioIntensity}
+                                        onChange={(e) =>
+                                          setNewLog({
+                                            ...newLog,
+                                            cardioIntensity: e.target.value,
+                                          })
+                                        }
+                                        className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-1.5 text-white text-xs"
+                                      >
+                                        <option value="leve">😌 Leve</option>
+                                        <option value="moderada">
+                                          💪 Moderada
+                                        </option>
+                                        <option value="intensa">
+                                          🔥 Intensa
+                                        </option>
+                                      </select>
+
+                                      {/* Resultado Calculado */}
+                                      {(() => {
+                                        const calculated =
+                                          calculateCardioCalories(
+                                            newLog.cardioType,
+                                            parseFloat(newLog.cardioDistance) ||
+                                              0,
+                                            parseFloat(newLog.cardioTime) || 0,
+                                            newLog.cardioIntensity,
+                                            evaluations.length > 0
+                                              ? evaluations[
+                                                  evaluations.length - 1
+                                                ].weight
+                                              : 70
+                                          );
+
+                                        // Auto-preenche o campo de cardio quando calculado
+                                        if (
+                                          calculated > 0 &&
+                                          newLog.exerciseCalories?.cardio !==
+                                            calculated.toString()
+                                        ) {
+                                          setTimeout(() => {
+                                            setNewLog((prev) => ({
+                                              ...prev,
+                                              exerciseCalories: {
+                                                ...prev.exerciseCalories,
+                                                cardio: calculated.toString(),
+                                              },
+                                            }));
+                                          }, 0);
+                                        }
+
+                                        return calculated > 0 ? (
+                                          <div className="bg-green-600/20 border border-green-500/30 rounded px-2 py-1.5 text-center">
+                                            <div className="text-green-300 text-xs font-semibold">
+                                              ≈ {calculated} kcal 🔥
+                                            </div>
+                                          </div>
+                                        ) : (
+                                          <p className="text-xs text-slate-500 text-center">
+                                            Preencha distância OU tempo
+                                          </p>
+                                        );
+                                      })()}
+                                    </div>
+                                  )}
                                 </div>
                               </div>
                               <div className="mt-3 p-3 bg-yellow-600/10 border border-yellow-600/20 rounded-lg">
