@@ -2371,7 +2371,7 @@
                                                             className="flex-1 bg-slate-700 border border-slate-600 rounded-lg px-4 py-3 text-white text-lg"
                                                             placeholder="6.0"
                                                         />
-                                                        <span className="text-slate-400 font-semibold">% BF</span>
+                                                        <span className="text-slate-400 font-semibold">% gordura</span>
                                                     </div>
                                                 </div>
                                             </div>
@@ -3331,7 +3331,7 @@
                                                                     </div>
                                                                 )}
                                                                 <div className="text-slate-400">
-                                                                    {weightChange < 0 ? 'Perda no cutting' : weightChange > 0 ? 'Ganho no bulking' : 'Manutenção'}
+                                                                    {weightChange < 0 ? 'Perda de massa magra' : weightChange > 0 ? 'Ganho de massa magra' : 'Manutenção'}
                                                                 </div>
                                                             </div>
                                                         );
@@ -4052,8 +4052,8 @@
                                                         {new Date(eval_item.date).toLocaleDateString('pt-BR')} • {eval_item.weight} kg
                                                     </div>
                                                     <div className="text-slate-400 text-sm mt-1">
-                                                        Soma: {eval_item.triceps + eval_item.subscapular + eval_item.chest + 
-                                                              eval_item.midaxillary + eval_item.abdominal + eval_item.suprailiac + eval_item.thigh} mm
+                                                        Soma: {(eval_item.triceps + eval_item.subscapular + eval_item.chest + 
+                                                              eval_item.midaxillary + eval_item.abdominal + eval_item.suprailiac + eval_item.thigh).toFixed(1)} mm
                                                     </div>
                                                 </div>
                                                 <button
@@ -5637,7 +5637,7 @@
                                                                 <div className={`text-3xl font-bold ${change >= 0 ? 'text-blue-400' : 'text-red-400'}`}>
                                                                     {change >= 0 ? '-' : '+'}{Math.abs(change).toFixed(2)}
                                                                 </div>
-                                                                <div className="text-sm text-slate-400 mt-1">kg {change >= 0 ? 'perdidos' : 'ganhos'}</div>
+                                                                <div className="text-sm text-slate-400 mt-1">kg de peso</div>
                                                             </>
                                                         );
                                                     })()}
@@ -5650,7 +5650,7 @@
                                                                 <div className={`text-3xl font-bold ${change >= 0 ? 'text-orange-400' : 'text-red-400'}`}>
                                                                     {change >= 0 ? '-' : '+'}{Math.abs(change).toFixed(2)}%
                                                                 </div>
-                                                                <div className="text-sm text-slate-400 mt-1">BF% {change >= 0 ? 'reduzido' : 'aumentado'}</div>
+                                                                <div className="text-sm text-slate-400 mt-1">% de gordura</div>
                                                             </>
                                                         );
                                                     })()}
@@ -5664,7 +5664,7 @@
                                                             return `${change >= 0 ? '+' : ''}${change.toFixed(2)}`;
                                                         })()}
                                                     </div>
-                                                    <div className="text-sm text-slate-400 mt-1">kg músculo</div>
+                                                    <div className="text-sm text-slate-400 mt-1">kg massa magra</div>
                                                 </div>
                                                 
                                                 {/* Tracking de % massa muscular */}
@@ -5735,7 +5735,7 @@
                                                                     {status}
                                                                 </div>
                                                                 <div className="text-xs text-slate-400 mt-1">
-                                                                    {weightChange < 0 ? 'Massa no cutting' : 'Massa no bulking'}
+                                                                    {weightChange < 0 ? 'Perda de massa' : 'Ganho de massa'}
                                                                 </div>
                                                             </>
                                                         );
@@ -5746,7 +5746,7 @@
                                                     <div className="text-3xl font-bold text-green-400">
                                                         {Math.abs(Math.round(((new Date(evaluations[0].date) - new Date(evaluations[evaluations.length - 1].date)) / (1000 * 60 * 60 * 24))))}
                                                     </div>
-                                                    <div className="text-sm text-slate-400 mt-1">dias de jornada</div>
+                                                    <div className="text-sm text-slate-400 mt-1">dias acompanhados</div>
                                                 </div>
                                             </div>
                                         </div>
