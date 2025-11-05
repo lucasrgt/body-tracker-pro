@@ -2642,8 +2642,8 @@
                                     };
                                 }
                                 
-                                // 2. Dias até a meta (se o progresso é bom)
-                                if (stats.avgDailyDeficit > 300 && stats.daysNeeded < 100) {
+                                // 2. Dias até a meta (se o progresso é bom E tiver pelo menos 30 registros)
+                                if (stats.avgDailyDeficit > 300 && stats.daysNeeded < 100 && dailyLogs.length >= 30) {
                                     return {
                                         emoji: '🎯',
                                         value: stats.daysNeeded,
