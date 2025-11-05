@@ -410,9 +410,11 @@
 
         // Helper: Verifica se uma data (YYYY-MM-DD) pertence a um mês/ano específico
         const dateMatchesMonthYear = (dateString, year, month) => {
-          if (!dateString || typeof dateString !== 'string') return false;
-          const [dateYear, dateMonth] = dateString.split('-');
-          return parseInt(dateYear) === year && parseInt(dateMonth) === (month + 1);
+          if (!dateString || typeof dateString !== "string") return false;
+          const [dateYear, dateMonth] = dateString.split("-");
+          return (
+            parseInt(dateYear) === year && parseInt(dateMonth) === month + 1
+          );
         };
 
         // Helper: Converte string YYYY-MM-DD para formato brasileiro sem timezone issues
@@ -839,8 +841,8 @@
           return { minimum, ideal };
         };
 
-        // Check if refeed is needed
-        const getRefeedStatus = () => {
+        // Check if refeed is needed (memoized para evitar recálculo a cada render)
+        const getRefeedStatus = useMemo(() => {
           const deficitDays = dailyLogs.filter((log) => {
             const exerciseTotal =
               (log.exerciseCalories?.strength || 0) +
@@ -868,7 +870,7 @@
             refeedRecommendation,
             lastRefeedDate: lastRefeed?.date,
           };
-        };
+        }, [dailyLogs, basalCalories]);
 
         // Calculate muscle mass change
         const calculateMuscleMassChange = () => {
@@ -1561,9 +1563,14 @@
           setShowAddLog(true);
           // Scroll suave para o formulário após um pequeno delay (para dar tempo do React renderizar)
           setTimeout(() => {
-            const formElement = document.querySelector('.bg-slate-800.rounded-xl.p-6.border.border-slate-700');
+            const formElement = document.querySelector(
+              ".bg-slate-800.rounded-xl.p-6.border.border-slate-700"
+            );
             if (formElement) {
-              formElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+              formElement.scrollIntoView({
+                behavior: "smooth",
+                block: "start",
+              });
             }
           }, 100);
         };
@@ -8026,7 +8033,7 @@
                           {(() => {
                             const year = dailyLogViewDate.getFullYear();
                             const month = dailyLogViewDate.getMonth();
-                            const filtered = dailyLogs.filter((log) => 
+                            const filtered = dailyLogs.filter((log) =>
                               dateMatchesMonthYear(log.date, year, month)
                             );
                             return `${filtered.length} registro${
@@ -8163,7 +8170,7 @@
 
                               <div
                                 className={`p-4 rounded-lg border ${
-                                  getRefeedStatus().needsRefeed
+                                  getRefeedStatus.needsRefeed
                                     ? "bg-green-900/30 border-green-700/50"
                                     : "bg-green-900/10 border-green-700/20"
                                 }`}
@@ -8174,7 +8181,7 @@
                                     checked={newLog.isRefeed}
                                     onChange={(e) => {
                                       const refeedCals =
-                                        getRefeedStatus().refeedRecommendation;
+                                        getRefeedStatus.refeedRecommendation;
                                       setNewLog({
                                         ...newLog,
                                         isRefeed: e.target.checked,
@@ -8192,14 +8199,14 @@
                                       <span className="text-white font-semibold">
                                         💪 Dia de Refeed
                                       </span>
-                                      {getRefeedStatus().needsRefeed && (
+                                      {getRefeedStatus.needsRefeed && (
                                         <span className="bg-green-600 text-xs px-2 py-0.5 rounded-full font-bold">
                                           RECOMENDADO!
                                         </span>
                                       )}
                                     </div>
                                     <p className="text-xs text-slate-400 mt-1">
-                                      {getRefeedStatus().refeedRecommendation}{" "}
+                                      {getRefeedStatus.refeedRecommendation}{" "}
                                       kcal (manutenção + 300)
                                     </p>
                                   </div>
@@ -8246,7 +8253,7 @@
                             </div>
 
                             {/* Refeed Alert */}
-                            {getRefeedStatus().needsRefeed &&
+                            {getRefeedStatus.needsRefeed &&
                               !newLog.isRefeed && (
                                 <div className="mb-4 p-4 bg-green-600/20 border border-green-500 rounded-lg">
                                   <h4 className="text-green-300 font-bold mb-2 flex items-center">
@@ -8255,19 +8262,19 @@
                                   <p className="text-sm text-green-200 mb-2">
                                     Você já tem{" "}
                                     <strong>
-                                      {getRefeedStatus().deficitDays} dias em
+                                      {getRefeedStatus.deficitDays} dias em
                                       deficit
                                     </strong>
-                                    {getRefeedStatus().lastRefeedDate &&
+                                    {getRefeedStatus.lastRefeedDate &&
                                       ` e ${
-                                        getRefeedStatus().daysSinceRefeed
+                                        getRefeedStatus.daysSinceRefeed
                                       } dias desde o último refeed`}
                                     . É hora de fazer um refeed estratégico para
                                     manter o metabolismo ativo!
                                   </p>
                                   <p className="text-xs text-green-300">
                                     💡 Marque "Dia de Refeed" e coma{" "}
-                                    {getRefeedStatus().refeedRecommendation}{" "}
+                                    {getRefeedStatus.refeedRecommendation}{" "}
                                     kcal hoje. Foque em carboidratos limpos
                                     (arroz, batata-doce, aveia).
                                   </p>
@@ -9233,7 +9240,11 @@
                       .filter((log) => {
                         const viewYear = dailyLogViewDate.getFullYear();
                         const viewMonth = dailyLogViewDate.getMonth();
-                        return dateMatchesMonthYear(log.date, viewYear, viewMonth);
+                        return dateMatchesMonthYear(
+                          log.date,
+                          viewYear,
+                          viewMonth
+                        );
                       })
                       .sort((a, b) => b.date.localeCompare(a.date))
                       .map((log) => {
