@@ -510,20 +510,20 @@
         // Helper: Valida e sanitiza valores numéricos de inputs
         const validateNumberInput = (value, min = 0, max = null) => {
           // Remove caracteres não numéricos exceto ponto e sinal negativo
-          let sanitized = value.toString().replace(/[^\d.-]/g, '');
-          
+          let sanitized = value.toString().replace(/[^\d.-]/g, "");
+
           // Converte para número
           let num = parseFloat(sanitized);
-          
+
           // Se não é um número válido, retorna vazio
-          if (isNaN(num)) return '';
-          
+          if (isNaN(num)) return "";
+
           // Aplica min
           if (num < min) num = min;
-          
+
           // Aplica max se definido
           if (max !== null && num > max) num = max;
-          
+
           return num.toString();
         };
 
@@ -2485,7 +2485,11 @@
                             onChange={(e) =>
                               setSetupData({
                                 ...setupData,
-                                weight: validateNumberInput(e.target.value, 20, 300),
+                                weight: validateNumberInput(
+                                  e.target.value,
+                                  20,
+                                  300
+                                ),
                               })
                             }
                             className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-3 text-white text-lg"
@@ -2504,7 +2508,11 @@
                             onChange={(e) =>
                               setSetupData({
                                 ...setupData,
-                                basalCalories: validateNumberInput(e.target.value, 1000, 5000),
+                                basalCalories: validateNumberInput(
+                                  e.target.value,
+                                  1000,
+                                  5000
+                                ),
                               })
                             }
                             className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-3 text-white text-lg"
@@ -2524,7 +2532,11 @@
                             onChange={(e) =>
                               setSetupData({
                                 ...setupData,
-                                targetBodyFat: validateNumberInput(e.target.value, 3, 50),
+                                targetBodyFat: validateNumberInput(
+                                  e.target.value,
+                                  3,
+                                  50
+                                ),
                               })
                             }
                             className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-3 text-white text-lg"
@@ -2563,7 +2575,11 @@
                             onChange={(e) =>
                               setSetupData({
                                 ...setupData,
-                                triceps: validateNumberInput(e.target.value, 0, 100),
+                                triceps: validateNumberInput(
+                                  e.target.value,
+                                  0,
+                                  100
+                                ),
                               })
                             }
                             className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white"
@@ -2583,7 +2599,11 @@
                             onChange={(e) =>
                               setSetupData({
                                 ...setupData,
-                                subscapular: validateNumberInput(e.target.value, 0, 100),
+                                subscapular: validateNumberInput(
+                                  e.target.value,
+                                  0,
+                                  100
+                                ),
                               })
                             }
                             className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white"
@@ -2603,7 +2623,11 @@
                             onChange={(e) =>
                               setSetupData({
                                 ...setupData,
-                                chest: validateNumberInput(e.target.value, 0, 100),
+                                chest: validateNumberInput(
+                                  e.target.value,
+                                  0,
+                                  100
+                                ),
                               })
                             }
                             className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white"
@@ -2623,7 +2647,11 @@
                             onChange={(e) =>
                               setSetupData({
                                 ...setupData,
-                                midaxillary: validateNumberInput(e.target.value, 0, 100),
+                                midaxillary: validateNumberInput(
+                                  e.target.value,
+                                  0,
+                                  100
+                                ),
                               })
                             }
                             className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white"
@@ -2643,7 +2671,11 @@
                             onChange={(e) =>
                               setSetupData({
                                 ...setupData,
-                                abdominal: validateNumberInput(e.target.value, 0, 100),
+                                abdominal: validateNumberInput(
+                                  e.target.value,
+                                  0,
+                                  100
+                                ),
                               })
                             }
                             className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white"
@@ -2663,7 +2695,11 @@
                             onChange={(e) =>
                               setSetupData({
                                 ...setupData,
-                                suprailiac: validateNumberInput(e.target.value, 0, 100),
+                                suprailiac: validateNumberInput(
+                                  e.target.value,
+                                  0,
+                                  100
+                                ),
                               })
                             }
                             className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white"
@@ -2683,7 +2719,11 @@
                             onChange={(e) =>
                               setSetupData({
                                 ...setupData,
-                                thigh: validateNumberInput(e.target.value, 0, 100),
+                                thigh: validateNumberInput(
+                                  e.target.value,
+                                  0,
+                                  100
+                                ),
                               })
                             }
                             className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white"
@@ -5041,8 +5081,13 @@
                                 max="5000"
                                 value={basalCalories}
                                 onChange={(e) => {
-                                  const validated = validateNumberInput(e.target.value, 1000, 5000);
-                                  if (validated !== '') setBasalCalories(Number(validated));
+                                  const validated = validateNumberInput(
+                                    e.target.value,
+                                    1000,
+                                    5000
+                                  );
+                                  if (validated !== "")
+                                    setBasalCalories(Number(validated));
                                 }}
                                 className="flex-1 bg-slate-700 border border-slate-600 rounded-lg px-4 py-3 text-white text-lg"
                                 placeholder="2300"
@@ -5066,8 +5111,13 @@
                                 max="50"
                                 value={targetBodyFat}
                                 onChange={(e) => {
-                                  const validated = validateNumberInput(e.target.value, 3, 50);
-                                  if (validated !== '') setTargetBodyFat(Number(validated));
+                                  const validated = validateNumberInput(
+                                    e.target.value,
+                                    3,
+                                    50
+                                  );
+                                  if (validated !== "")
+                                    setTargetBodyFat(Number(validated));
                                 }}
                                 className="flex-1 bg-slate-700 border border-slate-600 rounded-lg px-4 py-3 text-white text-lg"
                                 placeholder="6.0"
@@ -7855,7 +7905,14 @@
                             max="300"
                             value={newEval.weight}
                             onChange={(e) =>
-                              setNewEval({ ...newEval, weight: validateNumberInput(e.target.value, 20, 300) })
+                              setNewEval({
+                                ...newEval,
+                                weight: validateNumberInput(
+                                  e.target.value,
+                                  20,
+                                  300
+                                ),
+                              })
                             }
                             className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white"
                             placeholder="80.5"
@@ -7877,7 +7934,11 @@
                             onChange={(e) =>
                               setNewEval({
                                 ...newEval,
-                                triceps: validateNumberInput(e.target.value, 0, 100),
+                                triceps: validateNumberInput(
+                                  e.target.value,
+                                  0,
+                                  100
+                                ),
                               })
                             }
                             className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white"
@@ -7896,7 +7957,11 @@
                             onChange={(e) =>
                               setNewEval({
                                 ...newEval,
-                                subscapular: validateNumberInput(e.target.value, 0, 100),
+                                subscapular: validateNumberInput(
+                                  e.target.value,
+                                  0,
+                                  100
+                                ),
                               })
                             }
                             className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white"
@@ -7913,7 +7978,14 @@
                             max="100"
                             value={newEval.chest}
                             onChange={(e) =>
-                              setNewEval({ ...newEval, chest: validateNumberInput(e.target.value, 0, 100) })
+                              setNewEval({
+                                ...newEval,
+                                chest: validateNumberInput(
+                                  e.target.value,
+                                  0,
+                                  100
+                                ),
+                              })
                             }
                             className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white"
                           />
@@ -7931,7 +8003,11 @@
                             onChange={(e) =>
                               setNewEval({
                                 ...newEval,
-                                midaxillary: validateNumberInput(e.target.value, 0, 100),
+                                midaxillary: validateNumberInput(
+                                  e.target.value,
+                                  0,
+                                  100
+                                ),
                               })
                             }
                             className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white"
@@ -7950,7 +8026,11 @@
                             onChange={(e) =>
                               setNewEval({
                                 ...newEval,
-                                abdominal: validateNumberInput(e.target.value, 0, 100),
+                                abdominal: validateNumberInput(
+                                  e.target.value,
+                                  0,
+                                  100
+                                ),
                               })
                             }
                             className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white"
@@ -7969,7 +8049,11 @@
                             onChange={(e) =>
                               setNewEval({
                                 ...newEval,
-                                suprailiac: validateNumberInput(e.target.value, 0, 100),
+                                suprailiac: validateNumberInput(
+                                  e.target.value,
+                                  0,
+                                  100
+                                ),
                               })
                             }
                             className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white"
@@ -7986,7 +8070,14 @@
                             max="100"
                             value={newEval.thigh}
                             onChange={(e) =>
-                              setNewEval({ ...newEval, thigh: validateNumberInput(e.target.value, 0, 100) })
+                              setNewEval({
+                                ...newEval,
+                                thigh: validateNumberInput(
+                                  e.target.value,
+                                  0,
+                                  100
+                                ),
+                              })
                             }
                             className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white"
                           />
@@ -8290,7 +8381,11 @@
                                 onChange={(e) =>
                                   setNewLog({
                                     ...newLog,
-                                    calories: validateNumberInput(e.target.value, 0, 10000),
+                                    calories: validateNumberInput(
+                                      e.target.value,
+                                      0,
+                                      10000
+                                    ),
                                   })
                                 }
                                 disabled={newLog.isFasting}
@@ -8470,7 +8565,11 @@
                                         ...newLog,
                                         exerciseCalories: {
                                           ...newLog.exerciseCalories,
-                                          strength: validateNumberInput(e.target.value, 0, 2000),
+                                          strength: validateNumberInput(
+                                            e.target.value,
+                                            0,
+                                            2000
+                                          ),
                                         },
                                       })
                                     }
@@ -8539,7 +8638,11 @@
                                             ...newLog,
                                             exerciseCalories: {
                                               ...newLog.exerciseCalories,
-                                              cardio: validateNumberInput(e.target.value, 0, 2000),
+                                              cardio: validateNumberInput(
+                                                e.target.value,
+                                                0,
+                                                2000
+                                              ),
                                             },
                                           })
                                         }
@@ -8591,7 +8694,11 @@
                                                 setNewLog({
                                                   ...newLog,
                                                   cardioDistance:
-                                                    validateNumberInput(e.target.value, 0, 200),
+                                                    validateNumberInput(
+                                                      e.target.value,
+                                                      0,
+                                                      200
+                                                    ),
                                                 })
                                               }
                                               className="w-full bg-slate-700 border border-slate-600 rounded px-2 py-1 text-white text-sm"
@@ -8607,7 +8714,12 @@
                                               onChange={(e) =>
                                                 setNewLog({
                                                   ...newLog,
-                                                  cardioTime: validateNumberInput(e.target.value, 0, 600),
+                                                  cardioTime:
+                                                    validateNumberInput(
+                                                      e.target.value,
+                                                      0,
+                                                      600
+                                                    ),
                                                 })
                                               }
                                               className="w-full bg-slate-700 border border-slate-600 rounded px-2 py-1 text-white text-sm"
